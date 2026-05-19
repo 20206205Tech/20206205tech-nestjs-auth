@@ -5,6 +5,8 @@ import type { Request } from 'express';
 export interface JwtPayload {
   userId: string;
   email: string;
+  aal?: string;
+  amr?: Array<{ method: string; timestamp: number }>;
   [key: string]: unknown;
 }
 

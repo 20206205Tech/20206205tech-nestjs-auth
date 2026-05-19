@@ -22,7 +22,7 @@
     "generate-npm-version-minor": "npm version minor",
     "generate-npm-version-patch": "npm version patch",
     "generate-barrels": "barrelsby --directory ./src --delete --location top --no-barrelscan --singleQuotes --exclude \"\\.spec\\.ts$\"",
-    "ddd:docs": "depcruise src --include-only \"^src/\" --exclude \"\\.spec\\.ts$\" --output-type dot | dot -T png > docs/file-architecture.png",
+    "ddd:docs": "depcruise src --include-only \"^src/auth\" --exclude \"\\.spec\\.ts$\" --output-type dot | dot -T png > docs/file-architecture.png",
     "prepare": "husky"
   },
   "dependencies": {

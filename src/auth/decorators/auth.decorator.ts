@@ -9,28 +9,49 @@ import { IS_PUBLIC_KEY, ROLES_KEY } from '../constants/auth.constant';
 import { UserRole } from '../enums/user-role.enum';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
+import { MfaGuard } from '../guards/mfa.guard';
 
 export const Auth = {
   Public: () => applyDecorators(SetMetadata(IS_PUBLIC_KEY, true)),
 
   User: () =>
     applyDecorators(
-      UseGuards(JwtAuthGuard),
+      UseGuards(JwtAuthGuard, MfaGuard),
 
       ApiBearerAuth(SWAGGER_AUTH_KEY),
 
       ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+
+      ApiForbiddenResponse({
+        description: 'Forbidden - Requires Multi-factor authentication',
+      }),
     ),
 
   Admin: () =>
     applyDecorators(
-      UseGuards(JwtAuthGuard, RolesGuard),
+      UseGuards(JwtAuthGuard, MfaGuard, RolesGuard),
       SetMetadata(ROLES_KEY, [UserRole.ADMIN]),
 
       ApiBearerAuth(SWAGGER_AUTH_KEY),
 
       ApiUnauthorizedResponse({ description: 'Unauthorized' }),
 
-      ApiForbiddenResponse({ description: 'Forbidden - Requires Admin role' }),
+      ApiForbiddenResponse({
+        description:
+          'Forbidden - Requires Multi-factor authentication and Admin role',
+      }),
+    ),
+
+  Mfa: () =>
+    applyDecorators(
+      UseGuards(JwtAuthGuard, MfaGuard),
+
+      ApiBearerAuth(SWAGGER_AUTH_KEY),
+
+      ApiUnauthorizedResponse({ description: 'Unauthorized' }),
+
+      ApiForbiddenResponse({
+        description: 'Forbidden - Requires Multi-factor authentication',
+      }),
     ),
 };

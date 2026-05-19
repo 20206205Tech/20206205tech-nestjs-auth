@@ -8,6 +8,7 @@ export * from './auth/decorators/auth.decorator';
 export * from './auth/decorators/current-user.decorator';
 export * from './auth/enums/user-role.enum';
 export * from './auth/guards/jwt-auth.guard';
+export * from './auth/guards/mfa.guard';
 export * from './auth/guards/roles.guard';
 export * from './auth/strategies/jwt.strategy';
 export * from './constants/swagger.constant';
