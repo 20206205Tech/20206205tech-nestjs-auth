@@ -4,7 +4,6 @@ import { PassportStrategy } from '@nestjs/passport';
 import { passportJwtSecret } from 'jwks-rsa';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 
-// Định nghĩa kiểu dữ liệu rõ ràng thay vì dùng 'any'
 interface JwtPayload {
   sub: string;
   email?: string;
@@ -12,6 +11,8 @@ interface JwtPayload {
   app_metadata?: {
     role?: string;
   };
+  aal?: string;
+  amr?: Array<{ method: string; timestamp: number }>;
 }
 
 @Injectable()
@@ -20,6 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     const SUPABASE_PROJECT_ID = configService.getOrThrow<string>(
       'SUPABASE_PROJECT_ID',
     );
+
     const supabaseUrl = `https://${SUPABASE_PROJECT_ID}.supabase.co`;
 
     super({
@@ -38,12 +40,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  // Xóa từ khóa 'async' vì không sử dụng 'await' bên trong
   validate(payload: JwtPayload) {
     return {
       userId: payload.sub,
       email: payload.email,
       role: payload.app_metadata?.role || payload.role,
+      aal: payload.aal,
+      amr: payload.amr,
     };
   }
 }

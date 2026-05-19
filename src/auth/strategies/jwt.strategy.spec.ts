@@ -45,6 +45,8 @@ describe('JwtStrategy', () => {
         userId: 'user-id',
         email: 'test@example.com',
         role: 'admin',
+        aal: undefined,
+        amr: undefined,
       });
     });
 
@@ -61,6 +63,8 @@ describe('JwtStrategy', () => {
         userId: 'user-id',
         email: 'test@example.com',
         role: 'authenticated',
+        aal: undefined,
+        amr: undefined,
       });
     });
 
@@ -80,6 +84,28 @@ describe('JwtStrategy', () => {
         userId: 'user-id',
         email: 'test@example.com',
         role: 'admin',
+        aal: undefined,
+        amr: undefined,
+      });
+    });
+
+    it('should return user object with aal and amr from payload', () => {
+      const payload = {
+        sub: 'user-id',
+        email: 'test@example.com',
+        role: 'authenticated',
+        aal: 'aal2',
+        amr: [{ method: 'totp', timestamp: 123456789 }],
+      };
+
+      const result = strategy.validate(payload);
+
+      expect(result).toEqual({
+        userId: 'user-id',
+        email: 'test@example.com',
+        role: 'authenticated',
+        aal: 'aal2',
+        amr: [{ method: 'totp', timestamp: 123456789 }],
       });
     });
   });
