@@ -10,13 +10,14 @@ import { UserRole } from '../enums/user-role.enum';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { MfaGuard } from '../guards/mfa.guard';
+import { RequestIdGuard } from '../guards/request-id.guard';
 
 export const Auth = {
   Public: () => applyDecorators(SetMetadata(IS_PUBLIC_KEY, true)),
 
   User: () =>
     applyDecorators(
-      UseGuards(JwtAuthGuard, MfaGuard),
+      UseGuards(RequestIdGuard, JwtAuthGuard, MfaGuard),
 
       ApiBearerAuth(SWAGGER_AUTH_KEY),
 
@@ -29,7 +30,7 @@ export const Auth = {
 
   Admin: () =>
     applyDecorators(
-      UseGuards(JwtAuthGuard, MfaGuard, RolesGuard),
+      UseGuards(RequestIdGuard, JwtAuthGuard, MfaGuard, RolesGuard),
       SetMetadata(ROLES_KEY, [UserRole.ADMIN]),
 
       ApiBearerAuth(SWAGGER_AUTH_KEY),
@@ -44,7 +45,7 @@ export const Auth = {
 
   Mfa: () =>
     applyDecorators(
-      UseGuards(JwtAuthGuard, MfaGuard),
+      UseGuards(RequestIdGuard, JwtAuthGuard, MfaGuard),
 
       ApiBearerAuth(SWAGGER_AUTH_KEY),
 
