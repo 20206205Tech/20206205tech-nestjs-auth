@@ -10,6 +10,7 @@ export * from './auth/enums/user-role.enum';
 export * from './auth/guards/jwt-auth.guard';
 export * from './auth/guards/mfa.guard';
 export * from './auth/guards/request-id.guard';
+export * from './auth/guards/request-kong-secret.guard';
 export * from './auth/guards/roles.guard';
 export * from './auth/strategies/jwt.strategy';
 export * from './constants/swagger.constant';

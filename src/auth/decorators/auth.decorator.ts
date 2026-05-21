@@ -11,13 +11,14 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { RolesGuard } from '../guards/roles.guard';
 import { MfaGuard } from '../guards/mfa.guard';
 import { RequestIdGuard } from '../guards/request-id.guard';
+import { RequestKongSecretGuard } from '../guards/request-kong-secret.guard';
 
 export const Auth = {
   Public: () => applyDecorators(SetMetadata(IS_PUBLIC_KEY, true)),
 
   User: () =>
     applyDecorators(
-      UseGuards(RequestIdGuard, JwtAuthGuard, MfaGuard),
+      UseGuards(RequestIdGuard, RequestKongSecretGuard, JwtAuthGuard, MfaGuard),
 
       ApiBearerAuth(SWAGGER_AUTH_KEY),
 
@@ -30,7 +31,13 @@ export const Auth = {
 
   Admin: () =>
     applyDecorators(
-      UseGuards(RequestIdGuard, JwtAuthGuard, MfaGuard, RolesGuard),
+      UseGuards(
+        RequestIdGuard,
+        RequestKongSecretGuard,
+        JwtAuthGuard,
+        MfaGuard,
+        RolesGuard,
+      ),
       SetMetadata(ROLES_KEY, [UserRole.ADMIN]),
 
       ApiBearerAuth(SWAGGER_AUTH_KEY),
@@ -45,7 +52,7 @@ export const Auth = {
 
   Mfa: () =>
     applyDecorators(
-      UseGuards(RequestIdGuard, JwtAuthGuard, MfaGuard),
+      UseGuards(RequestIdGuard, RequestKongSecretGuard, JwtAuthGuard, MfaGuard),
 
       ApiBearerAuth(SWAGGER_AUTH_KEY),
 
