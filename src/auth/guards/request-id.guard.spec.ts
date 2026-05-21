@@ -3,9 +3,15 @@ import { RequestIdGuard } from './request-id.guard';
 
 describe('RequestIdGuard', () => {
   let guard: RequestIdGuard;
+  let originalEnv: string | undefined;
 
   beforeEach(() => {
     guard = new RequestIdGuard();
+    originalEnv = process.env.ENVIRONMENT;
+  });
+
+  afterEach(() => {
+    process.env.ENVIRONMENT = originalEnv;
   });
 
   it('should be defined', () => {
@@ -22,7 +28,24 @@ describe('RequestIdGuard', () => {
       } as unknown as ExecutionContext;
     });
 
+    it('should return true if ENVIRONMENT is development', () => {
+      process.env.ENVIRONMENT = 'development';
+      const getRequestSpy = jest.fn().mockReturnValue({ headers: {} });
+      (context.switchToHttp().getRequest as jest.Mock) = getRequestSpy;
+
+      expect(guard.canActivate(context)).toBe(true);
+    });
+
+    it('should return true if ENVIRONMENT is test', () => {
+      process.env.ENVIRONMENT = 'test';
+      const getRequestSpy = jest.fn().mockReturnValue({ headers: {} });
+      (context.switchToHttp().getRequest as jest.Mock) = getRequestSpy;
+
+      expect(guard.canActivate(context)).toBe(true);
+    });
+
     it('should throw BadRequestException if Request-Id header is missing', () => {
+      process.env.ENVIRONMENT = 'production';
       const getRequestSpy = jest.fn().mockReturnValue({ headers: {} });
       (context.switchToHttp().getRequest as jest.Mock) = getRequestSpy;
 
@@ -30,6 +53,7 @@ describe('RequestIdGuard', () => {
     });
 
     it('should throw BadRequestException if headers are undefined', () => {
+      process.env.ENVIRONMENT = 'production';
       const getRequestSpy = jest.fn().mockReturnValue({});
       (context.switchToHttp().getRequest as jest.Mock) = getRequestSpy;
 
@@ -37,14 +61,13 @@ describe('RequestIdGuard', () => {
     });
 
     it('should return true if Request-Id header is present', () => {
+      process.env.ENVIRONMENT = 'production';
       const getRequestSpy = jest
         .fn()
         .mockReturnValue({ headers: { 'request-id': 'abc-123' } });
       (context.switchToHttp().getRequest as jest.Mock) = getRequestSpy;
 
-      const result = guard.canActivate(context);
-
-      expect(result).toBe(true);
+      expect(guard.canActivate(context)).toBe(true);
     });
   });
 });
